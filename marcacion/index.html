@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANC | Marcacion de ausencias</title>
+  <link rel="stylesheet" href="css/app.css">
+  <style>[hidden]{display:none!important}.topbar-actions{display:flex;align-items:center;gap:18px}.topbar-actions a{padding:10px 14px;border:1px solid #64748b;border-radius:10px;color:#fff;font-size:12px;font-weight:800;text-decoration:none}.topbar-actions a:hover{background:#334155}@media(max-width:560px){.topbar-actions{gap:8px}.topbar-actions a{padding:8px 10px}}</style>
+</head>
+<body>
+  <header class="topbar">
+    <div><strong>ANC Logistica</strong><span>Control de ausencias</span></div>
+    <div class="topbar-actions"><time id="reloj">--:--:--</time><a href="../index.html">Menu principal</a></div>
+  </header>
+
+  <main class="marker-shell">
+    <section class="marker-card">
+      <div class="marker-head">
+        <span id="pasoActual">MARCACION</span>
+        <h1 id="tituloVista">Ingresa tu DNI</h1>
+        <p id="subtituloVista">Consulta rapida de salida o retorno.</p>
+      </div>
+      <div id="contenidoMarcacion">
+        <form id="formDni" class="dni-form">
+          <input id="dni" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="DNI" aria-label="DNI" required>
+          <button type="submit">CONTINUAR</button>
+        </form>
+      </div>
+      <div id="mensaje" class="mensaje" hidden></div>
+    </section>
+  </main>
+
+  <script src="../shared/config.js"></script>
+  <script src="../shared/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

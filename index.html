@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANC | Control de ausencias</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#0f172a,#1e3a5f);font-family:Arial,sans-serif;color:#172033}.shell{width:min(920px,100%);padding:38px;border-radius:26px;background:#f8fafc;box-shadow:0 30px 80px #02061766}.brand{color:#2563eb;font-weight:900}.shell h1{margin:10px 0 8px;font-size:clamp(34px,6vw,64px)}.shell p{color:#64748b}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:28px}.choice{display:block;padding:28px;border:1px solid #dbe4ee;border-radius:20px;background:white;color:#172033;text-decoration:none;transition:.2s}.choice:hover{transform:translateY(-4px);border-color:#60a5fa;box-shadow:0 16px 35px #2563eb22}.choice strong{display:block;font-size:25px}.choice span{display:block;margin-top:8px;color:#64748b}@media(max-width:650px){.choices{grid-template-columns:1fr}.shell{padding:24px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <span class="brand">ANC LOGISTICA</span>
+    <h1>Control de ausencias operativas</h1>
+    <p>Selecciona la vista que deseas utilizar.</p>
+    <section class="choices">
+      <a class="choice" href="marcacion/index.html"><strong>Marcacion</strong><span>Salida y retorno del personal.</span></a>
+      <a class="choice" href="admin/index.html"><strong>Administrador</strong><span>Personal fuera, alertas y reportes.</span></a>
+    </section>
+  </main>
+</body>
+</html>

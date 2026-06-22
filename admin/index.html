@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANC | Admin ausencias</title>
+  <link rel="stylesheet" href="css/app.css">
+  <style>[hidden]{display:none!important}.menu-link{display:block;margin-top:12px;padding:13px;border:1px solid #cbd5e1;border-radius:10px;color:#334155;font-size:13px;font-weight:800;text-align:center;text-decoration:none}.top-actions .menu-link{display:inline-flex;margin:0;align-items:center;border-color:#64748b;color:#fff}.collab-table{max-height:465px;overflow-y:auto}.collab-table thead th{position:sticky;top:0;z-index:3}@media (min-width:1001px){.filters{grid-template-columns:repeat(4,minmax(150px,220px)) minmax(240px,1fr)}}</style>
+</head>
+<body>
+  <section id="loginView" class="login-view">
+    <form class="login-card" onsubmit="login(event)">
+      <span>ANC LOGISTICA</span>
+      <h1>Administrador</h1>
+      <label>Usuario<input id="usuario" autocomplete="username" required></label>
+      <label>Contraseña<input id="password" type="password" autocomplete="current-password" required></label>
+      <button type="submit">INGRESAR</button>
+      <a class="menu-link" href="../index.html">Volver al menu principal</a>
+      <p id="loginError"></p>
+    </form>
+  </section>
+
+  <section id="adminView" hidden>
+    <header class="topbar">
+      <div><strong>Control de ausencias</strong><span id="estadoCarga">Preparando dashboard...</span></div>
+      <div class="top-actions"><a class="menu-link" href="../index.html">Menu principal</a><button onclick="cargarDashboard(true)">Actualizar datos</button><button class="ghost" onclick="logout()">Salir</button></div>
+    </header>
+    <main class="page">
+      <section class="hero">
+        <div><span>CONTROL OPERATIVO</span><h1>Ausencias del personal</h1></div>
+        <article><strong id="fueraAhora">0</strong><span>Fuera ahora</span></article>
+      </section>
+      <section class="filters">
+        <label>Operacion<select id="filtroGrupo" onchange="renderDashboard()"><option value="PRINCIPAL">Oslo + CD Oslo</option><option value="MULTIFORMATO">Multiformato</option><option value="">Todas</option></select></label>
+        <label>Periodo<select id="filtroPeriodo" onchange="cargarDashboard(true)"><option value="1">Hoy</option><option value="7">Ultimos 7 dias</option><option value="30">Ultimos 30 dias</option><option value="3650">Historico</option></select></label>
+        <label>Turno<select id="filtroTurno" onchange="renderDashboard()"><option value="">Todos</option><option>DIA</option><option>TARDE</option><option>NOCHE</option><option>SIN TURNO</option></select></label>
+        <label>Motivo<select id="filtroMotivo" onchange="renderDashboard()"><option value="">Todos</option><option value="BANO">BAÑO</option><option>BREAK</option><option>AGUA</option><option>OTRO</option></select></label>
+        <label class="search-label">Buscar<input id="filtroBuscar" placeholder="DNI, nombre, cargo o area" oninput="renderDashboard()"></label>
+      </section>
+      <div id="contenido"><div class="loading">Cargando informacion...</div></div>
+    </main>
+  </section>
+
+  <script src="../shared/config.js"></script>
+  <script src="../shared/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
