@@ -1,6 +1,8 @@
 let respuesta = { abiertos: [], marcaciones: [], personal: [] };
 let timerCarga = null;
 let timerReloj = null;
+let timerAbiertos = null;
+let timerFiltro = null;
 let detalleExportable = [];
 let resumenExportable = [];
 
@@ -47,6 +49,11 @@ function agruparEventos(marcaciones) {
 
 function filtrosActuales() {
   return { grupo: document.getElementById("filtroGrupo")?.value || "", turno: document.getElementById("filtroTurno")?.value || "", motivo: document.getElementById("filtroMotivo")?.value || "", q: normalizar(document.getElementById("filtroBuscar")?.value || "") };
+}
+
+function renderDashboardFiltrado() {
+  clearTimeout(timerFiltro);
+  timerFiltro = setTimeout(renderDashboard, 120);
 }
 
 function coincide(row, filtros) {
@@ -167,15 +174,46 @@ function guardarCachePersonal(personal, fechaRoster, abiertos) {
   localStorage.setItem(config.PERSONAL_CACHE_KEY, JSON.stringify({ fechaRoster, personal:combinado, abiertos:abiertos || [], guardado:new Date().toISOString() }));
 }
 
+function guardarCacheDashboard(data) {
+  try {
+    localStorage.setItem(config.DASHBOARD_CACHE_KEY, JSON.stringify({ ...data, guardado:new Date().toISOString() }));
+  } catch {}
+}
+
+function leerCacheDashboard() {
+  try {
+    const data = JSON.parse(localStorage.getItem(config.DASHBOARD_CACHE_KEY) || "null");
+    return data?.marcaciones ? data : null;
+  } catch {
+    return null;
+  }
+}
+
+function firmaAbiertos(items) {
+  return (items || []).map(item => `${item.idEvento || ""}:${item.dni || ""}:${item.motivo || ""}`).sort().join("|");
+}
+
 async function cargarDashboard(manual=false) {
   if (!AusenciasApi.apiUrl()) { document.getElementById("contenido").innerHTML=`<div class="notice">Configura la URL de Google Apps Script para comenzar.</div>`; return; }
   if (manual) localStorage.removeItem(config.PERSONAL_CACHE_KEY);
   document.getElementById("estadoCarga").textContent=manual?"Actualizando...":"Conectando...";
-  try { respuesta=await AusenciasApi.get("dashboard",{dias:document.getElementById("filtroPeriodo").value,refresh:manual?1:""});if(respuesta.personal?.length)guardarCachePersonal(respuesta.personal,respuesta.fechaRoster,respuesta.abiertos);document.getElementById("estadoCarga").textContent=`${respuesta.fechaRoster||"Sin fecha"} | ${respuesta.actualizado||"Actualizado"}`;renderDashboard(); }
+  try { respuesta=await AusenciasApi.get("dashboard",{dias:document.getElementById("filtroPeriodo").value,refresh:manual?1:""});if(respuesta.personal?.length)guardarCachePersonal(respuesta.personal,respuesta.fechaRoster,respuesta.abiertos);guardarCacheDashboard(respuesta);document.getElementById("estadoCarga").textContent=`${respuesta.fechaRoster||"Sin fecha"} | ${respuesta.actualizado||"Actualizado"}`;renderDashboard(); }
   catch(error){document.getElementById("estadoCarga").textContent="Error de conexion";document.getElementById("contenido").innerHTML=`<div class="notice">${html(error.message)}</div>`;}
 }
 
+async function cargarAbiertosRapido() {
+  if (!respuesta.marcaciones?.length) return;
+  try {
+    const data = await AusenciasApi.get("abiertos");
+    if (firmaAbiertos(data.abiertos) === firmaAbiertos(respuesta.abiertos)) return;
+    respuesta = { ...respuesta, abiertos:data.abiertos || [], actualizado:data.actualizado || respuesta.actualizado };
+    guardarCacheDashboard(respuesta);
+    document.getElementById("estadoCarga").textContent=`${respuesta.fechaRoster||data.fechaRoster||"Sin fecha"} | ${data.actualizado||"Actualizado"}`;
+    renderDashboard();
+  } catch {}
+}
+
 function login(event){event.preventDefault();const u=limpiar(document.getElementById("usuario").value),p=limpiar(document.getElementById("password").value);if(u!==config.ADMIN_USER||p!==config.ADMIN_PASSWORD){document.getElementById("loginError").textContent="Credenciales incorrectas.";return;}sessionStorage.setItem(config.ADMIN_SESSION_KEY,"1");mostrarAdmin();}
-function logout(){sessionStorage.removeItem(config.ADMIN_SESSION_KEY);clearInterval(timerCarga);clearInterval(timerReloj);document.getElementById("adminView").hidden=true;document.getElementById("loginView").hidden=false;document.getElementById("password").value="";}
-function mostrarAdmin(){document.getElementById("loginView").hidden=true;document.getElementById("adminView").hidden=false;cargarDashboard();clearInterval(timerCarga);clearInterval(timerReloj);timerCarga=setInterval(()=>cargarDashboard(false),config.POLL_MS);timerReloj=setInterval(actualizarRelojesActivos,1000);}
+function logout(){sessionStorage.removeItem(config.ADMIN_SESSION_KEY);clearInterval(timerCarga);clearInterval(timerReloj);clearInterval(timerAbiertos);document.getElementById("adminView").hidden=true;document.getElementById("loginView").hidden=false;document.getElementById("password").value="";}
+function mostrarAdmin(){document.getElementById("loginView").hidden=true;document.getElementById("adminView").hidden=false;const cache=leerCacheDashboard();if(cache){respuesta=cache;document.getElementById("estadoCarga").textContent=`${cache.fechaRoster||"Cache local"} | Cargando actualizacion...`;renderDashboard();}cargarDashboard();clearInterval(timerCarga);clearInterval(timerReloj);clearInterval(timerAbiertos);timerCarga=setInterval(()=>cargarDashboard(false),config.POLL_MS);timerAbiertos=setInterval(cargarAbiertosRapido,config.ABIERTOS_POLL_MS||10000);timerReloj=setInterval(actualizarRelojesActivos,1000);}
 if(sessionStorage.getItem(config.ADMIN_SESSION_KEY)==="1")mostrarAdmin();

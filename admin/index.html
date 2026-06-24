@@ -35,7 +35,7 @@
         <label>Periodo<select id="filtroPeriodo" onchange="cargarDashboard(true)"><option value="1">Hoy</option><option value="7">Ultimos 7 dias</option><option value="30">Ultimos 30 dias</option><option value="3650">Historico</option></select></label>
         <label>Turno<select id="filtroTurno" onchange="renderDashboard()"><option value="">Todos</option><option>DIA</option><option>TARDE</option><option>NOCHE</option><option>SIN TURNO</option></select></label>
         <label>Motivo<select id="filtroMotivo" onchange="renderDashboard()"><option value="">Todos</option><option value="BANO">BAÑO</option><option>BREAK</option><option>AGUA</option><option>OTRO</option></select></label>
-        <label class="search-label">Buscar<input id="filtroBuscar" placeholder="DNI, nombre, cargo o area" oninput="renderDashboard()"></label>
+        <label class="search-label">Buscar<input id="filtroBuscar" placeholder="DNI, nombre, cargo o area" oninput="renderDashboardFiltrado()"></label>
       </section>
       <div id="contenido"><div class="loading">Cargando informacion...</div></div>
     </main>

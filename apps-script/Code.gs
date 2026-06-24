@@ -206,7 +206,7 @@ function obtenerPersonalDia_(refresh) {
     if (!mapa[dni] || (mapa[dni].turnoProvisional && !candidato.turnoProvisional)) mapa[dni] = candidato;
   });
   const resultado = { fechaTexto:fechaTexto_(ultima), personas:Object.keys(mapa).map(key => mapa[key]) };
-  cache.put("personal_dia_v2", JSON.stringify(resultado), 60);
+  cache.put("personal_dia_v2", JSON.stringify(resultado), 21600);
   return resultado;
 }
 
